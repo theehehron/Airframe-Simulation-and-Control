@@ -16,5 +16,5 @@ The same year, the aircraft was built and flown. After its first two flights, th
 ![NSRA Aircraft](images/noise_shielding_research_aircraft.png)
 
 
-### Long Range Autonomous Testbed Aircraft
+### Long Endurance Autonomous Testbed Aircraft
 Work in progress...
