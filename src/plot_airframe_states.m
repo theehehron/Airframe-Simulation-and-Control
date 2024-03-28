@@ -3,7 +3,7 @@ function plot_airframe_states(simTime, simX, ylims)
 % plot all 9 states
 tiledlayout(3, 3)
 for i = 1:9
-    subplot(3, 3, i) % create 3x3 grid. ith grid is ith state
+    ax(i) = subplot(3, 3, i); %#ok<AGROW>
     plot(simTime, simX(:,i), "LineWidth", 2, "LineStyle", "-"); % plot ith state
     hold on;
     title(strcat("x_", num2str(i)))
@@ -20,6 +20,8 @@ for i = 1:9
     if nargin == 3
         ylim(ylims(i, :))
     end
+
+    linkaxes(ax, 'x')
 %     if i == 1
 %         ylim([-50 150]);
 %     elseif i == 3
