@@ -11,10 +11,10 @@ windseed = [randi([0 4000], 1, 4)];
 load("UAV_2010_Trim_point_SteadyState_35");
 X_trim_point = op_trim1.States.x;
 
-u = [op_trim1.Inputs(1).u
-     op_trim1.Inputs(2).u
-     op_trim1.Inputs(3).u
-     op_trim1.Inputs(4).u];
+u = [op_trim1.Inputs(1).u*pi/180 % aileron
+     op_trim1.Inputs(2).u*pi/180 % elevator
+     op_trim1.Inputs(3).u*pi/180 % rudder
+     op_trim1.Inputs(4).u]; % throttle
 
 t_end = 100;
 t = (0:0.5:t_end).'; % simulation time
