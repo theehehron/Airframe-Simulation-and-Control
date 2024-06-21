@@ -1,9 +1,19 @@
 clear; close all; clc;
 
+plot_results = false;
+
+% ------ Joystick control sensitivity ---------
+stick_sensitivity = 0.4;
+gear_deflection_limit = .2;
+
+% ------ Landing gear damping and stiffness -----
+c_gear = 0;
+k_gear = 500;
+
 % ------ initial position -------
-lat0 = deg2rad(63.9963);
-long0 = deg2rad(-22.6237);
-alt0 = 500;
+lat0 = deg2rad(63.9850);
+long0 = deg2rad(-22.595);
+alt0 = 48;
 
 
 windseed = [randi([0 4000], 1, 4)];
@@ -16,7 +26,7 @@ u = [op_trim1.Inputs(1).u*pi/180 % aileron
      op_trim1.Inputs(3).u*pi/180 % rudder
      op_trim1.Inputs(4).u]; % throttle
 
-t_end = 100;
+t_end = 600;
 t = (0:0.5:t_end).'; % simulation time
 
 % set very small components to zero
@@ -32,6 +42,8 @@ end
 u_sim(1:5, 1) = 0.1;
 
 X_init = X_trim_point;
+X_init(9) = -pi/2;
+% X_init = [1 0 0 0 0 0 0 0 0];
 tu = [t, u_sim];% create time and input for simulation
 
 %-------------- Setup Phugiod Response Input ------------------
@@ -51,52 +63,55 @@ T = inv(T_inv);
 simdata = sim("UAV_2010_simulink_model_run.slx"); % run simulation
 
 %% --------------- Plot data from simulation output ------------------
-sim_states = simdata.simout.signals.values(:, 1:9);
-sim_position = simdata.simout.signals.values(:, 10:12);
-sim_geodeticPosition = simdata.simout.signals.values(:, 13:15);
-sim_time = simdata.simout.time;
+if plot_results
 
-plot_airframe_states(sim_time, sim_states)
+    sim_states = simdata.simout.signals.values(:, 1:9);
+    sim_position = simdata.simout.signals.values(:, 10:12);
+    sim_geodeticPosition = simdata.simout.signals.values(:, 13:15);
+    sim_time = simdata.simout.time;
 
-%-------- Plot Position North-East-Down ---------
-figure;
-subplot(3, 1, 1)
-plot(sim_time, sim_position(:, 1));
-xlabel("time (s)")
-ylabel("position north (m)")
+    plot_airframe_states(sim_time, sim_states)
 
-subplot(3, 1, 2)
-plot(sim_time, sim_position(:, 2));
-xlabel("time (s)")
-ylabel("position east (m)")
+    %-------- Plot Position North-East-Down ---------
+    figure;
+    subplot(3, 1, 1)
+    plot(sim_time, sim_position(:, 1));
+    xlabel("time (s)")
+    ylabel("position north (m)")
 
-subplot(3, 1, 3)
-plot(sim_time, sim_position(:, 3));
-xlabel("time (s)")
-ylabel("MAMSL")
+    subplot(3, 1, 2)
+    plot(sim_time, sim_position(:, 2));
+    xlabel("time (s)")
+    ylabel("position east (m)")
 
-%--------- PLot Geodetic Coordinates --------------
-figure;
-subplot(3, 1, 1)
-plot(sim_time, sim_geodeticPosition(:, 1));
-xlabel("time (s)")
-ylabel("Latitude (deg)")
+    subplot(3, 1, 3)
+    plot(sim_time, sim_position(:, 3));
+    xlabel("time (s)")
+    ylabel("MAMSL")
 
-subplot(3, 1, 2)
-plot(sim_time, sim_geodeticPosition(:, 2));
-xlabel("time (s)")
-ylabel("Longitude (deg)")
+    %--------- PLot Geodetic Coordinates --------------
+    figure;
+    subplot(3, 1, 1)
+    plot(sim_time, sim_geodeticPosition(:, 1));
+    xlabel("time (s)")
+    ylabel("Latitude (deg)")
 
-subplot(3, 1, 3)
-plot(sim_time, sim_geodeticPosition(:, 3));
-xlabel("time (s)")
-ylabel("MAMSL")
+    subplot(3, 1, 2)
+    plot(sim_time, sim_geodeticPosition(:, 2));
+    xlabel("time (s)")
+    ylabel("Longitude (deg)")
+
+    subplot(3, 1, 3)
+    plot(sim_time, sim_geodeticPosition(:, 3));
+    xlabel("time (s)")
+    ylabel("MAMSL")
 
 
-% simTime = simdata.simU.Time; % extract time from simulation data
-% my_simX = simdata.simX.Data; % extract state from simulation data
-% figure();
-% plot_RCAM_states(simTime, my_simX, ylims)
-% sgtitle('Nonlinear RCAM Short Period Mode Time Response')
+    % simTime = simdata.simU.Time; % extract time from simulation data
+    % my_simX = simdata.simX.Data; % extract state from simulation data
+    % figure();
+    % plot_RCAM_states(simTime, my_simX, ylims)
+    % sgtitle('Nonlinear RCAM Short Period Mode Time Response')
+end
 
 
