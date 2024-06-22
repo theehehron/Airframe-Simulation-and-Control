@@ -3,17 +3,22 @@ clear; close all; clc;
 plot_results = false;
 
 % ------ Joystick control sensitivity ---------
-stick_sensitivity = 0.4;
+stick_sensitivity = 0.2;
 gear_deflection_limit = .2;
 
-% ------ Landing gear damping and stiffness -----
-c_gear = 0;
-k_gear = 500;
+% ------ Landing gear Parameters -----
+nose_gear_Xbody   = [  0.88,    0,  0.305];
+L_main_gear_Xbody = [-0.252, -0.5,  0.305];
+R_main_gear_Xbody = [-0.252,  0.5,  0.305];
+
+c_gear = 50; % these values of k and c are usable and don't crash the sim.
+k_gear = 600;
+
 
 % ------ initial position -------
 lat0 = deg2rad(63.9850);
-long0 = deg2rad(-22.595);
-alt0 = 48;
+long0 = deg2rad(-22.590);
+alt0 = 49;
 
 
 windseed = [randi([0 4000], 1, 4)];
